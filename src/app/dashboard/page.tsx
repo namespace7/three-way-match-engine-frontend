@@ -1,18 +1,23 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
-import { Activity, Upload, Database, GitCompare, ArrowRight, FileText, CheckCircle2, XCircle, RefreshCw } from 'lucide-react';
+import { Activity, Upload, Database, GitCompare, ArrowRight, FileText, CheckCircle2, XCircle, RefreshCw, Search } from 'lucide-react';
 import { ProtectedRoute } from '@/features/auth/components/ProtectedRoute';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 import { Spinner } from '@/components/ui/Spinner';
 import { getHealth } from '@/services/healthService';
 
 export default function DashboardPage() {
+  const router = useRouter();
+  const [poLookupInput, setPoLookupInput] = useState<string>('');
+
   const {
     data: health,
     isLoading: isHealthLoading,
@@ -24,6 +29,13 @@ export default function DashboardPage() {
     queryFn: getHealth,
     refetchInterval: 30000,
   });
+
+  const handlePoLookupSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (poLookupInput.trim()) {
+      router.push(`/match/${encodeURIComponent(poLookupInput.trim())}`);
+    }
+  };
 
   return (
     <ProtectedRoute>
@@ -45,7 +57,7 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Grid Layout: Health Card & Quick Stats */}
+          {/* Grid Layout: Health Card & Workflow Overview */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Backend Health Card */}
             <Card className="md:col-span-1 border-zinc-800 bg-zinc-900/80">
@@ -133,6 +145,7 @@ export default function DashboardPage() {
           <div>
             <h2 className="text-xs font-mono tracking-wider text-zinc-400 uppercase mb-3">Quick Navigation</h2>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {/* Card 1: Upload */}
               <Link href="/upload" className="group">
                 <Card className="h-full border-zinc-800 bg-zinc-900/60 hover:bg-zinc-900 hover:border-zinc-700 transition-all">
                   <div className="flex items-start justify-between">
@@ -148,6 +161,7 @@ export default function DashboardPage() {
                 </Card>
               </Link>
 
+              {/* Card 2: SKU Master */}
               <Link href="/skus" className="group">
                 <Card className="h-full border-zinc-800 bg-zinc-900/60 hover:bg-zinc-900 hover:border-zinc-700 transition-all">
                   <div className="flex items-start justify-between">
@@ -163,45 +177,62 @@ export default function DashboardPage() {
                 </Card>
               </Link>
 
-              <Link href="/match/PO-SAMPLE" className="group">
-                <Card className="h-full border-zinc-800 bg-zinc-900/60 hover:bg-zinc-900 hover:border-zinc-700 transition-all">
+              {/* Card 3: Interactive PO Lookup & Reconciliation Navigation */}
+              <Card className="h-full border-zinc-800 bg-zinc-900/60 flex flex-col justify-between">
+                <div>
                   <div className="flex items-start justify-between">
-                    <div className="flex h-9 w-9 items-center justify-center rounded bg-zinc-800 text-zinc-100 group-hover:bg-zinc-700">
+                    <div className="flex h-9 w-9 items-center justify-center rounded bg-zinc-800 text-zinc-100">
                       <GitCompare className="h-5 w-5" />
                     </div>
-                    <ArrowRight className="h-4 w-4 text-zinc-600 group-hover:text-zinc-300 transition-colors" />
+                    <Badge variant="outline" className="text-[10px]">Reconciliation</Badge>
                   </div>
-                  <div className="mt-4">
+                  <div className="mt-3">
                     <h3 className="text-sm font-semibold text-zinc-100">Match Engine</h3>
-                    <p className="text-xs text-zinc-400 mt-1">Inspect line-item reconciliation results</p>
+                    <p className="text-xs text-zinc-400 mt-1">
+                      Enter a PO Number to view 3-Way Match evaluation results.
+                    </p>
                   </div>
-                </Card>
-              </Link>
+                </div>
+
+                <form onSubmit={handlePoLookupSubmit} className="mt-4 flex gap-2">
+                  <Input
+                    placeholder="Enter PO # (e.g. PO-2024-0001)"
+                    value={poLookupInput}
+                    onChange={(e) => setPoLookupInput(e.target.value)}
+                    className="text-xs h-8"
+                  />
+                  <Button type="submit" variant="primary" size="sm" disabled={!poLookupInput.trim()} className="gap-1 h-8 shrink-0">
+                    <Search className="h-3.5 w-3.5" />
+                    <span>View</span>
+                  </Button>
+                </form>
+              </Card>
             </div>
           </div>
 
-          {/* Recent Uploads Placeholder */}
+          {/* Recent Ingestions & PO Guidance Section */}
           <Card className="border-zinc-800 bg-zinc-900/60">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <FileText className="h-4 w-4 text-zinc-400" />
-                  <CardTitle className="text-sm font-semibold">Recent Ingestions</CardTitle>
+                  <CardTitle className="text-sm font-semibold">Purchase Order Reconciliation</CardTitle>
                 </div>
-                <Badge variant="outline">Placeholder</Badge>
               </div>
               <CardDescription className="text-xs">
-                Recently processed documents will appear here once ingested.
+                Upload Purchase Orders to begin 3-Way reconciliation.
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="flex flex-col items-center justify-center p-8 border border-dashed border-zinc-800 rounded-md text-center">
                 <FileText className="h-8 w-8 text-zinc-600 mb-2" />
-                <p className="text-xs text-zinc-400 font-medium">No Recent Documents Ingested</p>
-                <p className="text-[11px] text-zinc-600 mt-0.5">Use the Upload section to ingest PO, GRN, or Invoice files.</p>
+                <p className="text-xs text-zinc-300 font-medium">No Purchase Orders have been selected yet</p>
+                <p className="text-[11px] text-zinc-500 mt-0.5 max-w-sm">
+                  Upload a Purchase Order document or enter a PO reference in the Match Engine card above to begin reconciliation.
+                </p>
                 <Link href="/upload" className="mt-4">
                   <Button variant="secondary" size="sm">
-                    Go to Upload
+                    Upload a Purchase Order
                   </Button>
                 </Link>
               </div>

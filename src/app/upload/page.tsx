@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useState, useRef, DragEvent, ChangeEvent } from 'react';
+import Link from 'next/link';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { Upload, FileText, CheckCircle2, AlertCircle, X } from 'lucide-react';
+import { Upload, FileText, CheckCircle2, AlertCircle, X, ArrowRight, GitCompare } from 'lucide-react';
 import { ProtectedRoute } from '@/features/auth/components/ProtectedRoute';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/Card';
@@ -133,6 +134,30 @@ export default function UploadPage() {
     if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
     return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
   };
+
+  const extractPoNumber = (response: UploadDocumentResponse | null): string | null => {
+    if (!response || !response.data) return null;
+    const data = response.data as Record<string, unknown>;
+
+    if (typeof data.poNumber === 'string' && data.poNumber.trim()) {
+      return data.poNumber.trim();
+    }
+    if (typeof data.poReference === 'string' && data.poReference.trim()) {
+      return data.poReference.trim();
+    }
+    if (data.parsedData && typeof data.parsedData === 'object') {
+      const parsed = data.parsedData as Record<string, unknown>;
+      if (typeof parsed.poNumber === 'string' && parsed.poNumber.trim()) {
+        return parsed.poNumber.trim();
+      }
+      if (typeof parsed.poReference === 'string' && parsed.poReference.trim()) {
+        return parsed.poReference.trim();
+      }
+    }
+    return null;
+  };
+
+  const detectedPoNumber = extractPoNumber(lastUploadedResult);
 
   return (
     <ProtectedRoute>
@@ -288,7 +313,7 @@ export default function UploadPage() {
               </form>
             </Card>
 
-            {/* Ingestion Output Result Card */}
+            {/* Ingestion Output Result Card with View 3-Way Match Primary Action */}
             {lastUploadedResult && (
               <Card className="border-emerald-800/60 bg-zinc-900/90 shadow-xl">
                 <CardHeader className="pb-3 border-b border-zinc-800">
@@ -302,11 +327,34 @@ export default function UploadPage() {
                     <Badge variant="success">Parsed Successfully</Badge>
                   </div>
                   <CardDescription className="text-xs text-zinc-400">
-                    Document raw parser payload returned from POST /api/v1/documents/upload
+                    Document parser payload returned from POST /api/v1/documents/upload
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="pt-4">
-                  <pre className="p-4 rounded-md bg-zinc-950 border border-zinc-800 text-xs font-mono text-emerald-400/90 overflow-x-auto max-h-96 leading-relaxed">
+                <CardContent className="pt-4 space-y-4">
+                  {/* Dynamic Match Navigation Trigger */}
+                  {detectedPoNumber && (
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-md bg-zinc-950 border border-emerald-800/80">
+                      <div className="flex items-center gap-2.5">
+                        <GitCompare className="h-5 w-5 text-emerald-400 shrink-0" />
+                        <div>
+                          <p className="text-xs font-semibold text-zinc-100">
+                            Purchase Order Detected: <span className="font-mono text-emerald-300">{detectedPoNumber}</span>
+                          </p>
+                          <p className="text-[11px] text-zinc-400">
+                            Reconciliation data is available for 3-Way Match evaluation.
+                          </p>
+                        </div>
+                      </div>
+                      <Link href={`/match/${encodeURIComponent(detectedPoNumber)}`}>
+                        <Button variant="primary" size="md" className="gap-2 w-full sm:w-auto">
+                          <span>View 3-Way Match</span>
+                          <ArrowRight className="h-4 w-4" />
+                        </Button>
+                      </Link>
+                    </div>
+                  )}
+
+                  <pre className="p-4 rounded-md bg-zinc-950 border border-zinc-800 text-xs font-mono text-emerald-400/90 overflow-x-auto max-h-80 leading-relaxed">
                     {JSON.stringify(lastUploadedResult, null, 2)}
                   </pre>
                 </CardContent>

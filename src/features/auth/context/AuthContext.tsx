@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useState, useCallback, ReactNode } from 'react';
+import React, { createContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { AuthContextType, LoginCredentials, User } from '../types';
 import authService from '../services/authService';
 import { setToken } from '@/utils/token';
@@ -12,10 +12,20 @@ export interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [token, setTokenState] = useState<string | null>(() => authService.getToken());
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => Boolean(authService.getToken()));
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [token, setTokenState] = useState<string | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const existingToken = authService.getToken();
+    if (existingToken) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setTokenState(existingToken);
+      setIsAuthenticated(true);
+    }
+    setIsLoading(false);
+  }, []);
 
   const login = useCallback(async (credentials: LoginCredentials) => {
     setIsLoading(true);

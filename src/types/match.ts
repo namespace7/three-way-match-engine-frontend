@@ -1,20 +1,30 @@
 export type MatchStatus = 'MATCHED' | 'DISCREPANCY' | 'MISMATCH' | 'FLAGGED' | 'PENDING' | 'NOT_FOUND';
 
+export interface StructuredEntity {
+  name?: string;
+  companyName?: string;
+  title?: string;
+  address?: string;
+  taxId?: string;
+  vatId?: string;
+  [key: string]: string | number | boolean | null | undefined;
+}
+
 export interface LinkedDocument {
   id: string;
   filename: string;
   originalName: string;
   documentType: 'PO' | 'GRN' | 'INVOICE' | 'PURCHASE_ORDER';
   uploadedAt?: string;
-  buyer?: string;
-  supplier?: string;
+  buyer?: string | StructuredEntity;
+  supplier?: string | StructuredEntity;
   issueDate?: string;
   dueDate?: string;
   totalAmount?: number;
   currency?: string;
   paymentTerms?: string;
   warehouse?: string;
-  receivedBy?: string;
+  receivedBy?: string | StructuredEntity;
   receivedDate?: string;
 }
 
@@ -75,13 +85,13 @@ export interface MatchData {
   overallTotals?: OverallTotals;
   documentCounts?: DocumentCounts;
   evaluatedAt?: string;
-  buyer?: string;
-  supplier?: string;
+  buyer?: string | StructuredEntity;
+  supplier?: string | StructuredEntity;
   issueDate?: string;
   currency?: string;
   paymentTerms?: string;
   warehouse?: string;
-  receivedBy?: string;
+  receivedBy?: string | StructuredEntity;
   receivedDate?: string;
   dueDate?: string;
 }
