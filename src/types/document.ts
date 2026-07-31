@@ -1,4 +1,4 @@
-export type DocumentType = 'PO' | 'INVOICE' | 'GRN';
+export type DocumentType = 'PURCHASE_ORDER' | 'PO' | 'GRN' | 'INVOICE';
 
 export interface DocumentItem {
   id: string;

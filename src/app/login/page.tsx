@@ -5,14 +5,14 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { ShieldCheck } from 'lucide-react';
+import { ShieldCheck, AlertCircle } from 'lucide-react';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/Card';
 
 const loginSchema = z.object({
-  email: z.string().min(1, 'Username or Email is required'),
+  username: z.string().min(1, 'Username is required'),
   password: z.string().min(1, 'Password is required'),
 });
 
@@ -30,7 +30,7 @@ export default function LoginPage() {
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: '',
+      username: '',
       password: '',
     },
   });
@@ -45,15 +45,20 @@ export default function LoginPage() {
     setErrorMessage(null);
     try {
       await login({
-        email: data.email,
+        username: data.username,
+        email: data.username,
         password: data.password,
       });
       router.push('/dashboard');
     } catch (err: unknown) {
-      if (err instanceof Error) {
-        setErrorMessage(err.message || 'Authentication failed. Please check credentials.');
+      if (err && typeof err === 'object' && 'response' in err) {
+        const axiosErr = err as { response?: { data?: { message?: string; error?: string } } };
+        const msg = axiosErr.response?.data?.message || axiosErr.response?.data?.error || 'Login failed. Please verify your credentials.';
+        setErrorMessage(msg);
+      } else if (err instanceof Error) {
+        setErrorMessage(err.message || 'Login failed. Please check your credentials.');
       } else {
-        setErrorMessage('Authentication failed. Please check credentials.');
+        setErrorMessage('Authentication error. Unable to log in.');
       }
     }
   };
@@ -70,42 +75,41 @@ export default function LoginPage() {
             <ShieldCheck className="h-6 w-6" />
           </div>
           <h2 className="text-xl font-bold tracking-tight text-zinc-100">Three-Way Match Engine</h2>
-          <p className="mt-1 text-xs text-zinc-400">Enter your credentials to access the portal</p>
+          <p className="mt-1 text-xs text-zinc-400">Reconciliation & Accounting Verification Portal</p>
         </div>
 
-        <Card className="border-zinc-800 bg-zinc-900/80">
+        <Card className="border-zinc-800 bg-zinc-900/80 shadow-xl">
           <CardHeader>
             <CardTitle className="text-base font-semibold">Sign In</CardTitle>
             <CardDescription className="text-xs">
-              Authenticate with your system credentials
+              Enter your system username and password
             </CardDescription>
           </CardHeader>
           <CardContent>
             {errorMessage && (
-              <div className="mb-4 rounded-md border border-rose-800 bg-rose-950/60 p-3 text-xs text-rose-300">
-                {errorMessage}
+              <div className="mb-4 flex items-start gap-2 rounded-md border border-rose-800 bg-rose-950/60 p-3 text-xs text-rose-300">
+                <AlertCircle className="h-4 w-4 shrink-0 text-rose-400 mt-0.5" />
+                <span>{errorMessage}</span>
               </div>
             )}
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <div className="relative">
-                <Input
-                  label="Username / Email"
-                  placeholder="admin@example.com"
-                  {...register('email')}
-                  error={errors.email?.message}
-                />
-              </div>
+              <Input
+                label="Username"
+                placeholder="Enter username"
+                autoComplete="username"
+                {...register('username')}
+                error={errors.username?.message}
+              />
 
-              <div className="relative">
-                <Input
-                  label="Password"
-                  type="password"
-                  placeholder="••••••••"
-                  {...register('password')}
-                  error={errors.password?.message}
-                />
-              </div>
+              <Input
+                label="Password"
+                type="password"
+                placeholder="••••••••"
+                autoComplete="current-password"
+                {...register('password')}
+                error={errors.password?.message}
+              />
 
               <Button
                 type="submit"
@@ -114,7 +118,7 @@ export default function LoginPage() {
                 className="w-full mt-2"
                 isLoading={isSubmitting}
               >
-                Sign In
+                {isSubmitting ? 'Authenticating...' : 'Sign In'}
               </Button>
             </form>
           </CardContent>
