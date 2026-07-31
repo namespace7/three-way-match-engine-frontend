@@ -1,16 +1,9 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { MatchItem } from '@/types/match';
 import { cn } from '@/lib/utils';
 import { AlertCircle, CheckCircle2 } from 'lucide-react';
-
-export interface ItemGridColumn {
-  key: string;
-  header: string;
-  render?: (item: MatchItem) => React.ReactNode;
-  align?: 'left' | 'center' | 'right';
-}
 
 export interface ItemGridProps {
   items: MatchItem[];
@@ -18,7 +11,7 @@ export interface ItemGridProps {
   currency?: string;
 }
 
-export const ItemGrid: React.FC<ItemGridProps> = ({
+export const ItemGrid: React.FC<ItemGridProps> = memo(({
   items,
   type = 'all',
   currency = 'USD',
@@ -159,6 +152,8 @@ export const ItemGrid: React.FC<ItemGridProps> = ({
       </div>
     </Card>
   );
-};
+});
+
+ItemGrid.displayName = 'ItemGrid';
 
 export default ItemGrid;

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { ReactNode, useEffect } from 'react';
+import React, { ReactNode, useEffect, useId } from 'react';
 import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -21,6 +21,9 @@ export const Modal: React.FC<ModalProps> = ({
   children,
   className,
 }) => {
+  const titleId = useId();
+  const descriptionId = useId();
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isOpen) {
@@ -58,13 +61,22 @@ export const Modal: React.FC<ModalProps> = ({
         )}
         role="dialog"
         aria-modal="true"
+        aria-labelledby={titleId}
+        aria-describedby={description ? descriptionId : undefined}
       >
         <div className="flex items-start justify-between border-b border-zinc-800 pb-4 mb-4">
           <div>
-            <h2 className="text-base font-semibold text-zinc-100 tracking-tight">{title}</h2>
-            {description && <p className="text-xs text-zinc-400 mt-0.5">{description}</p>}
+            <h2 id={titleId} className="text-base font-semibold text-zinc-100 tracking-tight">
+              {title}
+            </h2>
+            {description && (
+              <p id={descriptionId} className="text-xs text-zinc-400 mt-0.5">
+                {description}
+              </p>
+            )}
           </div>
           <button
+            type="button"
             onClick={onClose}
             className="rounded p-1 text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100 transition-colors"
             aria-label="Close dialog"

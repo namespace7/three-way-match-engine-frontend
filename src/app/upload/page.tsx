@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { DocumentType } from '@/types/document';
 import { uploadDocument, UploadDocumentResponse } from '@/services/documentService';
+import { getErrorMessage } from '@/utils/error';
 
 const ALLOWED_TYPES = ['application/pdf', 'image/png', 'image/jpeg', 'image/jpg'];
 const ALLOWED_EXTENSIONS = ['.pdf', '.png', '.jpg', '.jpeg'];
@@ -49,13 +50,7 @@ export default function UploadPage() {
     },
     onError: (err: unknown) => {
       setUploadProgress(0);
-      let errorMsg = 'Failed to upload document.';
-      if (err && typeof err === 'object' && 'response' in err) {
-        const axiosErr = err as { response?: { data?: { message?: string; error?: string } } };
-        errorMsg = axiosErr.response?.data?.message || axiosErr.response?.data?.error || errorMsg;
-      } else if (err instanceof Error) {
-        errorMsg = err.message;
-      }
+      const errorMsg = getErrorMessage(err, 'Failed to upload document.');
       setValidationError(errorMsg);
       toast.error(errorMsg);
     },

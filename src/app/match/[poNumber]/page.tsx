@@ -15,6 +15,7 @@ import { DocumentHeader } from '@/components/match/DocumentHeader';
 import { ItemGrid } from '@/components/match/ItemGrid';
 import { PDFViewer } from '@/components/match/PDFViewer';
 import { SummaryCard } from '@/components/match/SummaryCard';
+import { getErrorMessage } from '@/utils/error';
 import { cn } from '@/lib/utils';
 
 export interface MatchPageProps {
@@ -109,7 +110,7 @@ export default function MatchPage({ params }: MatchPageProps) {
               </div>
               <h2 className="text-sm font-semibold text-rose-300">Failed to Load Match Data</h2>
               <p className="text-xs text-rose-400/80 max-w-md mx-auto">
-                {error instanceof Error ? error.message : `No match evaluation record found for PO "${poNumber}".`}
+                {getErrorMessage(error, `No match evaluation record found for PO "${poNumber}".`)}
               </p>
               <Button variant="outline" size="sm" onClick={() => refetch()} className="mt-2">
                 Retry Query
@@ -120,6 +121,7 @@ export default function MatchPage({ params }: MatchPageProps) {
               {/* Tab Navigation Controls */}
               <div className="flex border-b border-zinc-800 space-x-1 overflow-x-auto">
                 <button
+                  type="button"
                   onClick={() => setActiveTab('po')}
                   className={cn(
                     'flex items-center gap-2 px-4 py-2.5 text-xs font-medium border-b-2 transition-colors whitespace-nowrap',
@@ -133,6 +135,7 @@ export default function MatchPage({ params }: MatchPageProps) {
                 </button>
 
                 <button
+                  type="button"
                   onClick={() => setActiveTab('delivery')}
                   className={cn(
                     'flex items-center gap-2 px-4 py-2.5 text-xs font-medium border-b-2 transition-colors whitespace-nowrap',
@@ -146,6 +149,7 @@ export default function MatchPage({ params }: MatchPageProps) {
                 </button>
 
                 <button
+                  type="button"
                   onClick={() => setActiveTab('fulfillment')}
                   className={cn(
                     'flex items-center gap-2 px-4 py-2.5 text-xs font-medium border-b-2 transition-colors whitespace-nowrap',
@@ -159,6 +163,7 @@ export default function MatchPage({ params }: MatchPageProps) {
                 </button>
 
                 <button
+                  type="button"
                   onClick={() => setActiveTab('summary')}
                   className={cn(
                     'flex items-center gap-2 px-4 py-2.5 text-xs font-medium border-b-2 transition-colors whitespace-nowrap',

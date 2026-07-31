@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Eye, Edit2, Trash2, Database } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
@@ -13,7 +13,7 @@ export interface SkuTableProps {
   onDelete: (sku: SKU) => void;
 }
 
-export const SkuTable: React.FC<SkuTableProps> = ({
+export const SkuTable: React.FC<SkuTableProps> = memo(({
   skus,
   isLoading,
   onView,
@@ -145,6 +145,8 @@ export const SkuTable: React.FC<SkuTableProps> = ({
       </div>
     </Card>
   );
-};
+});
+
+SkuTable.displayName = 'SkuTable';
 
 export default SkuTable;

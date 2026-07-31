@@ -15,6 +15,7 @@ import { SearchToolbar } from '@/components/skus/SearchToolbar';
 import { SkuTable } from '@/components/skus/SkuTable';
 import { SkuModal } from '@/components/skus/SkuModal';
 import { DeleteDialog } from '@/components/skus/DeleteDialog';
+import { getErrorMessage } from '@/utils/error';
 
 export default function SKUsPage() {
   const queryClient = useQueryClient();
@@ -60,14 +61,7 @@ export default function SKUsPage() {
       setEditingSku(null);
     },
     onError: (err: unknown) => {
-      let msg = 'Failed to create SKU.';
-      if (err && typeof err === 'object' && 'response' in err) {
-        const axiosErr = err as { response?: { data?: { message?: string; error?: string } } };
-        msg = axiosErr.response?.data?.message || axiosErr.response?.data?.error || msg;
-      } else if (err instanceof Error) {
-        msg = err.message;
-      }
-      toast.error(msg);
+      toast.error(getErrorMessage(err, 'Failed to create SKU.'));
     },
   });
 
@@ -81,14 +75,7 @@ export default function SKUsPage() {
       setEditingSku(null);
     },
     onError: (err: unknown) => {
-      let msg = 'Failed to update SKU.';
-      if (err && typeof err === 'object' && 'response' in err) {
-        const axiosErr = err as { response?: { data?: { message?: string; error?: string } } };
-        msg = axiosErr.response?.data?.message || axiosErr.response?.data?.error || msg;
-      } else if (err instanceof Error) {
-        msg = err.message;
-      }
-      toast.error(msg);
+      toast.error(getErrorMessage(err, 'Failed to update SKU.'));
     },
   });
 
@@ -102,14 +89,7 @@ export default function SKUsPage() {
       setDeletingSku(null);
     },
     onError: (err: unknown) => {
-      let msg = 'Failed to delete SKU.';
-      if (err && typeof err === 'object' && 'response' in err) {
-        const axiosErr = err as { response?: { data?: { message?: string; error?: string } } };
-        msg = axiosErr.response?.data?.message || axiosErr.response?.data?.error || msg;
-      } else if (err instanceof Error) {
-        msg = err.message;
-      }
-      toast.error(msg);
+      toast.error(getErrorMessage(err, 'Failed to delete SKU.'));
     },
   });
 
@@ -193,7 +173,7 @@ export default function SKUsPage() {
               </div>
               <h2 className="text-sm font-semibold text-rose-300">Failed to Load SKU Catalog</h2>
               <p className="text-xs text-rose-400/80 max-w-md mx-auto">
-                {error instanceof Error ? error.message : 'Unable to connect to backend SKU master service.'}
+                {getErrorMessage(error, 'Unable to connect to backend SKU master service.')}
               </p>
               <Button variant="outline" size="sm" onClick={() => refetch()} className="mt-2">
                 Retry Connection

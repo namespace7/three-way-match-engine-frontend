@@ -10,6 +10,7 @@ import { useAuth } from '@/features/auth/hooks/useAuth';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/Card';
+import { getErrorMessage } from '@/utils/error';
 
 const loginSchema = z.object({
   username: z.string().min(1, 'Username is required'),
@@ -51,15 +52,7 @@ export default function LoginPage() {
       });
       router.push('/dashboard');
     } catch (err: unknown) {
-      if (err && typeof err === 'object' && 'response' in err) {
-        const axiosErr = err as { response?: { data?: { message?: string; error?: string } } };
-        const msg = axiosErr.response?.data?.message || axiosErr.response?.data?.error || 'Login failed. Please verify your credentials.';
-        setErrorMessage(msg);
-      } else if (err instanceof Error) {
-        setErrorMessage(err.message || 'Login failed. Please check your credentials.');
-      } else {
-        setErrorMessage('Authentication error. Unable to log in.');
-      }
+      setErrorMessage(getErrorMessage(err, 'Authentication failed. Please verify your credentials.'));
     }
   };
 
