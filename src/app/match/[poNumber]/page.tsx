@@ -50,7 +50,7 @@ export default function MatchPage({ params }: MatchPageProps) {
   const grnDoc = matchData?.linkedDocuments?.grns?.[0];
   const invoiceDoc = matchData?.linkedDocuments?.invoices?.[0];
 
-  const currency = matchData?.currency || matchData?.overallTotals?.currency || poDoc?.currency || 'USD';
+  const currency = matchData?.currency || matchData?.overallTotals?.currency || poDoc?.currency || 'INR';
   const reasons = matchData?.reasons || matchData?.reasonCodes || [];
 
   return (

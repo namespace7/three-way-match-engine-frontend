@@ -14,7 +14,7 @@ export interface ItemGridProps {
 export const ItemGrid: React.FC<ItemGridProps> = memo(({
   items,
   type = 'all',
-  currency = 'USD',
+  currency = 'INR',
 }) => {
   if (!items || items.length === 0) {
     return (

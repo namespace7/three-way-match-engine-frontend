@@ -10,7 +10,7 @@ export interface SummaryCardProps {
 }
 
 export const SummaryCard: React.FC<SummaryCardProps> = ({ matchData }) => {
-  const currency = matchData.overallTotals?.currency || matchData.currency || 'USD';
+  const currency = matchData.overallTotals?.currency || matchData.currency || 'INR';
   const totals = matchData.overallTotals || {};
   const quantities = matchData.aggregatedQuantities || {};
   const counts = matchData.documentCounts || {};
