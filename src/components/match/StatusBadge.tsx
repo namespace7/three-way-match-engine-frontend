@@ -1,5 +1,5 @@
 import React from 'react';
-import { CheckCircle2, XCircle, Clock } from 'lucide-react';
+import { CheckCircle2, XCircle, Clock, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { MatchStatus } from '@/types/match';
 
@@ -17,9 +17,11 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
   const normalizedStatus = (status || 'PENDING').toUpperCase();
 
   const isMatched = normalizedStatus === 'MATCHED';
+  const isPartial = normalizedStatus === 'PARTIALLY_MATCHED' || normalizedStatus === 'PARTIAL';
   const isDiscrepancy =
     normalizedStatus === 'DISCREPANCY' ||
     normalizedStatus === 'MISMATCH' ||
+    normalizedStatus === 'MISMATCHED' ||
     normalizedStatus === 'FLAGGED';
 
   const sizeClasses = {
@@ -49,6 +51,21 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
     );
   }
 
+  if (isPartial) {
+    return (
+      <span
+        className={cn(
+          'inline-flex items-center rounded-md border border-amber-800/90 bg-amber-950/90 text-amber-300 font-mono tracking-wide',
+          sizeClasses[size],
+          className
+        )}
+      >
+        <AlertTriangle className={cn('text-amber-400', iconSizes[size])} />
+        <span>PARTIALLY MATCHED</span>
+      </span>
+    );
+  }
+
   if (isDiscrepancy) {
     return (
       <span
@@ -59,7 +76,7 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
         )}
       >
         <XCircle className={cn('text-rose-400', iconSizes[size])} />
-        <span>{normalizedStatus}</span>
+        <span>MISMATCHED</span>
       </span>
     );
   }
@@ -67,12 +84,12 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
   return (
     <span
       className={cn(
-        'inline-flex items-center rounded-md border border-amber-800 bg-amber-950/80 text-amber-300 font-mono tracking-wide',
+        'inline-flex items-center rounded-md border border-zinc-700 bg-zinc-900 text-zinc-300 font-mono tracking-wide',
         sizeClasses[size],
         className
       )}
     >
-      <Clock className={cn('text-amber-400', iconSizes[size])} />
+      <Clock className={cn('text-zinc-400', iconSizes[size])} />
       <span>{normalizedStatus}</span>
     </span>
   );

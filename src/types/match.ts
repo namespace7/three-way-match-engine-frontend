@@ -1,4 +1,4 @@
-export type MatchStatus = 'MATCHED' | 'DISCREPANCY' | 'MISMATCH' | 'FLAGGED' | 'PENDING' | 'NOT_FOUND';
+export type MatchStatus = 'MATCHED' | 'PARTIALLY_MATCHED' | 'PARTIAL' | 'MISMATCHED' | 'DISCREPANCY' | 'MISMATCH' | 'FLAGGED' | 'PENDING' | 'NOT_FOUND';
 
 export interface StructuredEntity {
   name?: string;
@@ -11,8 +11,9 @@ export interface StructuredEntity {
 }
 
 export interface LinkedDocument {
-  id: string;
-  filename: string;
+  id?: string;
+  _id?: string;
+  filename?: string;
   originalName: string;
   documentType: 'PO' | 'GRN' | 'INVOICE' | 'PURCHASE_ORDER';
   uploadedAt?: string;
@@ -30,15 +31,27 @@ export interface LinkedDocument {
 
 export interface MatchItem {
   id?: string;
+  sku?: string;
   skuCode: string;
   skuName?: string;
   description?: string;
+  orderedQuantity?: number;
+  receivedQuantity?: number;
+  rejectedQuantity?: number;
+  pendingQuantity?: number;
+  rejectionReason?: string | null;
+  invoicedQuantity?: number;
+  orderedPrice?: number;
+  invoicePrice?: number;
+
+  // Frontend aliases
   poQuantity?: number;
   poUnitPrice?: number;
   grnQuantity?: number;
   grnRejectedQuantity?: number;
   invoiceQuantity?: number;
   invoiceUnitPrice?: number;
+
   matched?: boolean;
   isDiscrepancy?: boolean;
   discrepancies?: string[];
@@ -54,6 +67,8 @@ export interface AggregatedQuantities {
 }
 
 export interface OverallTotals {
+  poTotalAmount?: number;
+  invoiceTotalAmount?: number;
   poTotal?: number;
   invoiceTotal?: number;
   priceDifference?: number;
