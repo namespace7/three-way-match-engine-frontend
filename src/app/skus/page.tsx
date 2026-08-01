@@ -16,6 +16,7 @@ import { SkuTable } from '@/components/skus/SkuTable';
 import { SkuModal } from '@/components/skus/SkuModal';
 import { DeleteDialog } from '@/components/skus/DeleteDialog';
 import { getErrorMessage } from '@/utils/error';
+import { formatINR } from '@/utils/currency';
 
 export default function SKUsPage() {
   const queryClient = useQueryClient();
@@ -187,6 +188,7 @@ export default function SKUsPage() {
               onView={(sku) => setViewSku(sku)}
               onEdit={handleOpenEditModal}
               onDelete={handleOpenDeleteDialog}
+              onNewSku={handleOpenCreateModal}
             />
           )}
 
@@ -242,7 +244,7 @@ export default function SKUsPage() {
                   </div>
                   <div>
                     <span className="text-zinc-500 font-mono">Unit Price</span>
-                    <p className="font-semibold text-zinc-100 font-mono mt-0.5">${viewSku.unitPrice.toFixed(2)}</p>
+                    <p className="font-semibold text-zinc-100 font-mono mt-0.5">{formatINR(viewSku.unitPrice)}</p>
                   </div>
                   <div>
                     <span className="text-zinc-500 font-mono">Unit of Measure</span>

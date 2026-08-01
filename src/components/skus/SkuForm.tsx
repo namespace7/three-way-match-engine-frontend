@@ -108,7 +108,7 @@ export const SkuForm: React.FC<SkuFormProps> = ({
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Input
-          label="Unit Price *"
+          label="Unit Price (₹) *"
           type="number"
           step="0.01"
           placeholder="0.00"

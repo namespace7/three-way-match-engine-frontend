@@ -5,6 +5,8 @@ import { MatchItem } from '@/types/match';
 import { cn } from '@/lib/utils';
 import { AlertCircle, CheckCircle2, PackageCheck } from 'lucide-react';
 
+import { formatCurrency } from '@/utils/currency';
+
 export interface ItemGridProps {
   items: MatchItem[];
   type?: 'po' | 'delivery' | 'fulfillment' | 'all';
@@ -26,7 +28,7 @@ export const ItemGrid: React.FC<ItemGridProps> = memo(({
 
   const formatPrice = (val?: number) => {
     if (val === undefined || val === null) return '—';
-    return `${currency} ${val.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    return formatCurrency(val, currency === 'INR' ? 'INR ' : `${currency} `);
   };
 
   return (
