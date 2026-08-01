@@ -32,7 +32,7 @@ export const PDFViewer: React.FC<PDFViewerProps> = ({
       setLoading(true);
       setLoadError(false);
       try {
-        const response = await api.get(`/api/v1/documents/${encodeURIComponent(documentId)}/file`, {
+        const response = await api.get(`/documents/${encodeURIComponent(documentId)}/file`, {
           responseType: 'blob',
         });
 

@@ -1,10 +1,10 @@
 import api from './api';
 import { MatchData, MatchResponse } from '@/types/match';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5001/api/v1';
 
 export const getMatchByPoNumber = async (poNumber: string): Promise<MatchData> => {
-  const response = await api.get<MatchResponse | MatchData>(`/api/v1/match/${encodeURIComponent(poNumber)}`);
+  const response = await api.get<MatchResponse | MatchData>(`/match/${encodeURIComponent(poNumber)}`);
   
   if ('data' in response.data && response.data.data) {
     return response.data.data;
@@ -13,7 +13,7 @@ export const getMatchByPoNumber = async (poNumber: string): Promise<MatchData> =
 };
 
 export const getDocumentFileUrl = (documentId: string): string => {
-  return `${API_BASE_URL}/api/v1/documents/${encodeURIComponent(documentId)}/file`;
+  return `${API_BASE_URL}/documents/${encodeURIComponent(documentId)}/file`;
 };
 
 const matchService = {

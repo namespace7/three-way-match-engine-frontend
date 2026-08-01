@@ -2,7 +2,7 @@ import api from './api';
 import { SKU, CreateSKUDto, UpdateSKUDto, SkuResponse } from '@/types/sku';
 
 export const getSkus = async (): Promise<SKU[]> => {
-  const response = await api.get<SkuResponse | SKU[]>('/api/v1/skus');
+  const response = await api.get<SkuResponse | SKU[]>('/skus');
   if (Array.isArray(response.data)) {
     return response.data;
   }
@@ -14,7 +14,7 @@ export const getSkus = async (): Promise<SKU[]> => {
 };
 
 export const getSkuById = async (id: string): Promise<SKU> => {
-  const response = await api.get<SkuResponse | SKU>(`/api/v1/skus/${encodeURIComponent(id)}`);
+  const response = await api.get<SkuResponse | SKU>(`/skus/${encodeURIComponent(id)}`);
   if ('data' in response.data && response.data.data && !Array.isArray(response.data.data)) {
     return response.data.data;
   }
@@ -22,7 +22,7 @@ export const getSkuById = async (id: string): Promise<SKU> => {
 };
 
 export const createSku = async (dto: CreateSKUDto): Promise<SKU> => {
-  const response = await api.post<SkuResponse | SKU>('/api/v1/skus', dto);
+  const response = await api.post<SkuResponse | SKU>('/skus', dto);
   if ('data' in response.data && response.data.data && !Array.isArray(response.data.data)) {
     return response.data.data;
   }
@@ -30,7 +30,7 @@ export const createSku = async (dto: CreateSKUDto): Promise<SKU> => {
 };
 
 export const updateSku = async ({ id, dto }: { id: string; dto: UpdateSKUDto }): Promise<SKU> => {
-  const response = await api.patch<SkuResponse | SKU>(`/api/v1/skus/${encodeURIComponent(id)}`, dto);
+  const response = await api.patch<SkuResponse | SKU>(`/skus/${encodeURIComponent(id)}`, dto);
   if ('data' in response.data && response.data.data && !Array.isArray(response.data.data)) {
     return response.data.data;
   }
@@ -38,7 +38,7 @@ export const updateSku = async ({ id, dto }: { id: string; dto: UpdateSKUDto }):
 };
 
 export const deleteSku = async (id: string): Promise<void> => {
-  await api.delete(`/api/v1/skus/${encodeURIComponent(id)}`);
+  await api.delete(`/skus/${encodeURIComponent(id)}`);
 };
 
 const skuService = {
