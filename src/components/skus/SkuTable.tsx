@@ -72,6 +72,7 @@ export const SkuTable: React.FC<SkuTableProps> = memo(({
               <th className="py-3 px-4 font-semibold">SKU Code</th>
               <th className="py-3 px-4 font-semibold">Name</th>
               <th className="py-3 px-4 font-semibold">Category</th>
+              <th className="py-3 px-4 font-semibold">Aliases</th>
               <th className="py-3 px-4 text-right font-semibold">Unit Price</th>
               <th className="py-3 px-4 text-right font-semibold">Tolerance %</th>
               <th className="py-3 px-4 text-center font-semibold">Unit</th>
@@ -98,6 +99,25 @@ export const SkuTable: React.FC<SkuTableProps> = memo(({
                   {/* Category */}
                   <td className="py-3.5 px-4 text-zinc-400 font-mono">
                     {sku.category || '—'}
+                  </td>
+
+                  {/* Aliases */}
+                  <td className="py-3.5 px-4 font-mono text-xs">
+                    {sku.aliases && sku.aliases.length > 0 ? (
+                      <div className="flex flex-wrap gap-1">
+                        {sku.aliases.map((alias, idx) => (
+                          <span
+                            key={idx}
+                            className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] bg-zinc-800 text-emerald-400 border border-zinc-700 font-mono"
+                            title={alias.vendorGstin ? `Vendor: ${alias.vendorGstin}` : 'Global Alias'}
+                          >
+                            {alias.code}
+                          </span>
+                        ))}
+                      </div>
+                    ) : (
+                      <span className="text-zinc-500">—</span>
+                    )}
                   </td>
 
                   {/* Unit Price */}
