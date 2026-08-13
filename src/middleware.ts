@@ -21,8 +21,8 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Read the auth token from cookies (set by authService.login on the client).
-  const token = request.cookies.get('auth_token')?.value;
+  // Read the auth token from cookies (set as HttpOnly by the backend server).
+  const token = request.cookies.get('access_token')?.value;
 
   // Unauthenticated requests to protected routes → redirect to /login.
   if (!token && pathname !== '/login') {

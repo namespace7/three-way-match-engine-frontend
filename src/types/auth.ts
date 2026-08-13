@@ -4,21 +4,20 @@ export interface LoginCredentials {
   password?: string;
 }
 
-export interface AuthTokenData {
-  token: string;
+export interface User {
+  id?: string;
+  username?: string;
+  email?: string;
   type?: string;
+  role?: string;
 }
 
 export interface AuthLoginResponse {
   success: boolean;
-  data: AuthTokenData;
-  message?: string;
-}
-
-export interface User {
-  id?: string;
-  email?: string;
-  type?: string;
+  data: {
+    user: User;
+    message?: string;
+  };
 }
 
 export interface AuthState {

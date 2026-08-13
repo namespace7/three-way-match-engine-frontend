@@ -3,7 +3,6 @@
 import React, { createContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { AuthContextType, LoginCredentials, User } from '../types';
 import authService from '../services/authService';
-import { setToken } from '@/utils/token';
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -12,43 +11,60 @@ export interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [token, setTokenState] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    const existingToken = authService.getToken();
-    if (existingToken) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setTokenState(existingToken);
-      setIsAuthenticated(true);
-    }
-    setIsLoading(false);
+    let isMounted = true;
+    const checkSession = async () => {
+      try {
+        const currentUser = await authService.getMe();
+        if (isMounted) {
+          if (currentUser) {
+            setIsAuthenticated(true);
+            setUser(currentUser);
+          } else {
+            setIsAuthenticated(false);
+            setUser(null);
+          }
+        }
+      } catch {
+        if (isMounted) {
+          setIsAuthenticated(false);
+          setUser(null);
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    checkSession();
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const login = useCallback(async (credentials: LoginCredentials) => {
     setIsLoading(true);
     try {
-      const data = await authService.login(credentials);
-      setTokenState(data.token);
+      const currentUser = await authService.login(credentials);
       setIsAuthenticated(true);
-      setUser({ type: data.type });
+      setUser(currentUser);
     } finally {
       setIsLoading(false);
     }
   }, []);
 
-  const loginWithToken = useCallback((newToken: string, type?: string) => {
-    setToken(newToken);
-    setTokenState(newToken);
+  const loginWithToken = useCallback((_newToken: string, type?: string) => {
     setIsAuthenticated(true);
-    setUser({ type });
+    setUser({ type: type || 'admin' });
   }, []);
 
-  const logout = useCallback(() => {
-    authService.logout();
-    setTokenState(null);
+  const logout = useCallback(async () => {
+    await authService.logout();
     setIsAuthenticated(false);
     setUser(null);
   }, []);
@@ -56,7 +72,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   return (
     <AuthContext.Provider
       value={{
-        token,
+        token: null,
         isAuthenticated,
         isLoading,
         user,
@@ -69,3 +85,5 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     </AuthContext.Provider>
   );
 };
+
+export default AuthProvider;
