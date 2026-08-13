@@ -22,7 +22,7 @@ const skuFormSchema = z
     tolerancePercent: z.number({ message: 'Tolerance must be a valid number' }).min(0, 'Tolerance must be >= 0').optional(),
     unitOfMeasure: z.string().min(1, 'Unit of Measure is required'),
     status: z.enum(['ACTIVE', 'INACTIVE']),
-    aliases: z.array(aliasFormSchema).optional().default([]),
+    aliases: z.array(aliasFormSchema).default([]),
   })
   .superRefine((data, ctx) => {
     if (data.aliases && data.aliases.length > 0) {
@@ -71,14 +71,14 @@ export const SkuForm: React.FC<SkuFormProps> = ({
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<SkuFormData>({
+  } = useForm({
     resolver: zodResolver(skuFormSchema),
     defaultValues: {
       skuCode: initialData?.skuCode || '',
       name: initialData?.name || '',
       category: initialData?.category || '',
       unitPrice: initialData?.unitPrice ?? 0,
-      tolerancePercent: initialData?.tolerancePercent ?? initialData?.priceTolerance ? (initialData.priceTolerance * 100) : 0,
+      tolerancePercent: initialData?.tolerancePercent ?? (initialData?.priceTolerance !== undefined ? initialData.priceTolerance * 100 : 0),
       unitOfMeasure: initialData?.unitOfMeasure || initialData?.unit || 'EA',
       status: (initialData?.status || (initialData?.isActive === false ? 'INACTIVE' : 'ACTIVE')) as 'ACTIVE' | 'INACTIVE',
       aliases: initialData?.aliases?.map((a) => ({
@@ -214,8 +214,8 @@ export const SkuForm: React.FC<SkuFormProps> = ({
         ) : (
           <div className="space-y-2.5">
             {fields.map((field, index) => (
-              <div key={field.id} className="flex items-end gap-2.5 bg-zinc-950 p-2.5 rounded border border-zinc-800">
-                <div className="flex-1">
+              <div key={field.id} className="flex flex-col sm:flex-row sm:items-end gap-2.5 bg-zinc-950 p-3 rounded border border-zinc-800">
+                <div className="flex-1 min-w-0">
                   <Input
                     label="External Code *"
                     placeholder="e.g. 11423 or FG-P-F-0503"
@@ -224,7 +224,7 @@ export const SkuForm: React.FC<SkuFormProps> = ({
                     error={errors.aliases?.[index]?.code?.message}
                   />
                 </div>
-                <div className="flex-1">
+                <div className="flex-1 min-w-0">
                   <Input
                     label="Vendor GSTIN (Optional)"
                     placeholder="e.g. 27ABACA2423J1Z0"
@@ -239,10 +239,11 @@ export const SkuForm: React.FC<SkuFormProps> = ({
                   size="sm"
                   onClick={() => remove(index)}
                   disabled={isLoading}
-                  className="h-9 px-2 text-rose-400 hover:bg-rose-950/40 hover:text-rose-300 border border-zinc-800 shrink-0"
+                  className="h-9 px-3 text-rose-400 hover:bg-rose-950/40 hover:text-rose-300 border border-zinc-800 shrink-0 self-end sm:self-auto"
                   title="Remove alias"
                 >
                   <Trash2 className="h-4 w-4" />
+                  <span className="sm:hidden text-xs ml-1.5">Remove Alias</span>
                 </Button>
               </div>
             ))}

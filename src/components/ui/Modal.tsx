@@ -56,7 +56,7 @@ export const Modal: React.FC<ModalProps> = ({
       {/* Modal Container */}
       <div
         className={cn(
-          'relative z-10 w-full max-w-lg rounded-lg border border-zinc-800 bg-zinc-900 p-6 text-zinc-100 shadow-2xl transition-all',
+          'relative z-10 w-full max-w-lg max-h-[90vh] flex flex-col my-auto rounded-lg border border-zinc-800 bg-zinc-900 p-4 sm:p-6 text-zinc-100 shadow-2xl transition-all overflow-hidden',
           className
         )}
         role="dialog"
@@ -64,7 +64,7 @@ export const Modal: React.FC<ModalProps> = ({
         aria-labelledby={titleId}
         aria-describedby={description ? descriptionId : undefined}
       >
-        <div className="flex items-start justify-between border-b border-zinc-800 pb-4 mb-4">
+        <div className="flex items-start justify-between border-b border-zinc-800 pb-3 mb-3 shrink-0">
           <div>
             <h2 id={titleId} className="text-base font-semibold text-zinc-100 tracking-tight">
               {title}
@@ -78,14 +78,14 @@ export const Modal: React.FC<ModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="rounded p-1 text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100 transition-colors"
+            className="rounded p-1.5 text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100 transition-colors shrink-0"
             aria-label="Close dialog"
           >
             <X className="h-4 w-4" />
           </button>
         </div>
 
-        <div>{children}</div>
+        <div className="flex-1 overflow-y-auto pr-1">{children}</div>
       </div>
     </div>
   );
