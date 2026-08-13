@@ -8,6 +8,12 @@ export const getErrorMessage = (error: unknown, fallbackMessage = 'An unexpected
     const responseData = axiosErr.response?.data;
 
     if (responseData) {
+      if (Array.isArray((responseData as { errors?: Array<{ message?: string }> }).errors)) {
+        const errArray = (responseData as { errors?: Array<{ message?: string }> }).errors;
+        if (errArray && errArray.length > 0 && typeof errArray[0]?.message === 'string' && errArray[0].message.trim() !== '') {
+          return errArray[0].message;
+        }
+      }
       if (typeof responseData.message === 'string' && responseData.message.trim() !== '') {
         return responseData.message;
       }

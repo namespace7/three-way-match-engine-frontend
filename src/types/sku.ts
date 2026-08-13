@@ -1,15 +1,25 @@
 export type SkuStatus = 'ACTIVE' | 'INACTIVE';
 
+export interface SKUAlias {
+  code: string;
+  vendorGstin?: string | null;
+}
+
 export interface SKU {
-  id: string;
+  id?: string;
+  _id?: string;
   skuCode: string;
   name: string;
   description?: string;
   unitPrice: number;
   tolerancePercent?: number;
-  unitOfMeasure: string;
+  priceTolerance?: number;
+  unitOfMeasure?: string;
+  unit?: string;
   category?: string;
-  status: SkuStatus;
+  status?: SkuStatus;
+  isActive?: boolean;
+  aliases?: SKUAlias[];
   createdAt?: string;
   updatedAt?: string;
 }
@@ -20,9 +30,13 @@ export interface CreateSKUDto {
   description?: string;
   unitPrice: number;
   tolerancePercent?: number;
-  unitOfMeasure: string;
+  priceTolerance?: number;
+  unitOfMeasure?: string;
+  unit?: string;
   category?: string;
-  status: SkuStatus;
+  status?: SkuStatus;
+  isActive?: boolean;
+  aliases?: SKUAlias[];
 }
 
 export type UpdateSKUDto = Partial<CreateSKUDto>;

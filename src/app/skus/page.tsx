@@ -254,6 +254,23 @@ export default function SKUsPage() {
                     <span className="text-zinc-500 font-mono">Tolerance</span>
                     <p className="font-semibold text-zinc-100 font-mono mt-0.5">{viewSku.tolerancePercent ?? 0}%</p>
                   </div>
+                  <div className="col-span-2">
+                    <span className="text-zinc-500 font-mono">External Code Aliases</span>
+                    {viewSku.aliases && viewSku.aliases.length > 0 ? (
+                      <div className="flex flex-wrap gap-1.5 mt-1">
+                        {viewSku.aliases.map((a, i) => (
+                          <span
+                            key={i}
+                            className="px-2 py-0.5 rounded bg-zinc-800 text-emerald-400 font-mono text-[11px] border border-zinc-700"
+                          >
+                            {a.code} {a.vendorGstin ? <span className="text-zinc-400">({a.vendorGstin})</span> : <span className="text-zinc-500">(Global)</span>}
+                          </span>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-zinc-500 font-mono mt-0.5">None configured</p>
+                    )}
+                  </div>
                 </div>
 
                 <div className="flex justify-end pt-2">
